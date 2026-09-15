@@ -1,25 +1,16 @@
 <?php
 
-$hostname = "localhost";
-$username = "root";
-$password = "1234";
-$database = "biblioteca";
+$servidor = "localhost";
+$usuario = "root";
+$contraseña = "1234";
+$base_datos = "biblioteca";
 
-$conex = mysqli_connect($hostname, $username, $password, $database);
+$conexion = new mysqli($servidor, $usuario, $contraseña, $base_datos);
 
-if (!$conex) {
-    die("Error de conexión: " . mysqli_connect_error());
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);
 }
-// echo '<pre>';
-// var_dump($conex);
-// echo '</pre>';
 
-// if ($conex){
-//     echo "conexion exitosa";
-// }
+$conexion->set_charset("utf8");
 
-
-// if (!$conex){
-//     echo "hubo un error";
-//     exit;
-// }
+?>

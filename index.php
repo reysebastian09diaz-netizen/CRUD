@@ -1,12 +1,40 @@
 <?php
 
-require "./db/funciones.php";
+session_start();
 
-$login = iniciar_sesion();
+require_once("db/funciones.php");
 
-$adduser = create_user();
+$mensaje = "";
 
-$usuarios = obtener_usuarios();
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $email = $_POST["email"];
+    $contraseña = $_POST["contraseña"];
+
+    $sql = "SELECT * FROM usuario WHERE email = ? AND contraseña = ?";
+
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("ss", $email, $contraseña);
+    $stmt->execute();
+
+    $resultado = $stmt->get_result();
+
+    if ($resultado->num_rows > 0) {
+
+        $usuario = $resultado->fetch_assoc();
+
+        $_SESSION["cedula"] = $usuario["documento"];
+        $_SESSION["nombre"] = $usuario["nombre"];
+
+        header("Location: pag/users.php");
+        exit();
+
+    } else {
+
+        $mensaje = "Usuario o contraseña incorrectos.";
+
+    }
+}
 
 ?>
 
@@ -14,246 +42,39 @@ $usuarios = obtener_usuarios();
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>CRUD Biblioteca</title>
-
+    <title>Iniciar Sesión</title>
 </head>
 
 <body>
 
+    <h1>Login</h1>
 
-    <!-- LOGIN -->
+    <?php if ($mensaje != "") { ?>
+        <p><?php echo $mensaje; ?></p>
+    <?php } ?>
 
-    <h1>Iniciar sesión</h1>
+    <form method="POST">
 
-    <?php
-
-    if (!empty($login)) {
-
-        foreach ($login as $error) {
-
-            echo "<p>$error</p>";
-
-        }
-
-    }
-
-    ?>
-
-    <form action="index.php" method="POST">
-
-        <label for="email_login">Correo:</label>
-
-        <input
-            type="email"
-            name="email_login"
-            id="email_login"
-            required
-        >
+        <label>Correo:</label>
+        <br>
+        <input type="email" name="email" required>
 
         <br><br>
 
-
-        <label for="contraseña_login">Contraseña:</label>
-
-        <input
-            type="password"
-            name="contraseña_login"
-            id="contraseña_login"
-            required
-        >
+        <label>Contraseña:</label>
+        <br>
+        <input type="password" name="contraseña" required>
 
         <br><br>
 
-
-        <input
-            type="submit"
-            name="login"
-            value="Iniciar sesión"
-        >
+        <button type="submit">Ingresar</button>
 
     </form>
 
+    <br>
 
-    <hr>
-
-
-    <!-- REGISTRO -->
-
-    <h1>Registrar usuario</h1>
-
-    <?php
-
-    if (!empty($adduser)) {
-
-        foreach ($adduser as $error) {
-
-            echo "<p>$error</p>";
-
-        }
-
-    }
-
-    ?>
-
-    <form action="index.php" method="POST">
-
-        <label for="nombre">Nombre:</label>
-
-        <input
-            type="text"
-            name="nombre"
-            id="nombre"
-            required
-        >
-
-        <br><br>
-
-
-        <label for="documento">Documento:</label>
-
-        <input
-            type="text"
-            name="documento"
-            id="documento"
-            required
-        >
-
-        <br><br>
-
-
-        <label for="telefono">Teléfono:</label>
-
-        <input
-            type="text"
-            name="telefono"
-            id="telefono"
-            required
-        >
-
-        <br><br>
-
-
-        <label for="email">Correo:</label>
-
-        <input
-            type="email"
-            name="email"
-            id="email"
-            required
-        >
-
-        <br><br>
-
-
-        <label for="direccion">Dirección:</label>
-
-        <input
-            type="text"
-            name="direccion"
-            id="direccion"
-            required
-        >
-
-        <br><br>
-
-
-        <label for="contraseña">Contraseña:</label>
-
-        <input
-            type="password"
-            name="contraseña"
-            id="contraseña"
-            required
-        >
-
-        <br><br>
-
-
-        <input
-            type="submit"
-            name="agregar"
-            value="Registrar usuario"
-        >
-
-    </form>
-
-
-    <hr>
-
-
-    <!-- LISTA DE USUARIOS -->
-
-    <h1>Usuarios registrados</h1>
-
-    <table border="1">
-
-        <tr>
-
-            <th>ID</th>
-
-            <th>Nombre</th>
-
-            <th>Documento</th>
-
-            <th>Teléfono</th>
-
-            <th>Email</th>
-
-            <th>Dirección</th>
-
-        </tr>
-
-
-        <?php
-
-        if ($usuarios) {
-
-            while ($usuario = mysqli_fetch_assoc($usuarios)) {
-
-        ?>
-
-                <tr>
-
-                    <td>
-                        <?php echo $usuario["id_usuario"]; ?>
-                    </td>
-
-                    <td>
-                        <?php echo $usuario["nombre"]; ?>
-                    </td>
-
-                    <td>
-                        <?php echo $usuario["documento"]; ?>
-                    </td>
-
-                    <td>
-                        <?php echo $usuario["telefono"]; ?>
-                    </td>
-
-                    <td>
-                        <?php echo $usuario["email"]; ?>
-                    </td>
-
-                    <td>
-                        <?php echo $usuario["direccion"]; ?>
-                    </td>
-
-                </tr>
-
-        <?php
-
-            }
-
-        }
-
-        ?>
-
-    </table>
+    <a href="form/formUsuarios.php">Registrar usuario</a>
 
 </body>
 

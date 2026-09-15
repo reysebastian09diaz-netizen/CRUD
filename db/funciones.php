@@ -1,138 +1,77 @@
 <?php
 
+require_once("conexion.php");
+
+
 function obtener_usuarios()
 {
-    require "conexion.php";
+    global $conexion;
 
     $sql = "SELECT * FROM usuario";
-    $query = mysqli_query($conex, $sql);
+    $resultado = $conexion->query($sql);
 
-    return $query;
+    $usuarios = [];
+
+    if ($resultado) {
+        while ($fila = $resultado->fetch_assoc()) {
+            $usuarios[] = $fila;
+        }
+    }
+
+    return $usuarios;
 }
 
 
-function create_user()
+function obtener_usuario($documento)
 {
-    require "conexion.php";
+    global $conexion;
 
-    $errores = [];
+    $sql = "SELECT * FROM usuario WHERE documento = ?";
 
-    $nombre = "";
-    $documento = "";
-    $telefono = "";
-    $email = "";
-    $direccion = "";
-    $contraseña = "";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("s", $documento);
+    $stmt->execute();
 
-    if (isset($_POST["agregar"])) {
+    $resultado = $stmt->get_result();
 
-        $nombre = $_POST["nombre"] ?? "";
-        $documento = $_POST["documento"] ?? "";
-        $telefono = $_POST["telefono"] ?? "";
-        $email = $_POST["email"] ?? "";
-        $direccion = $_POST["direccion"] ?? "";
-        $contraseña = $_POST["contraseña"] ?? "";
-
-        // VALIDACIONES
-
-        if (!$nombre) {
-            $errores[] = "Ingrese el nombre";
-        }
-
-        if (!$documento) {
-            $errores[] = "Ingrese el documento";
-        }
-
-        if (!$telefono) {
-            $errores[] = "Ingrese el teléfono";
-        }
-
-        if (!$email) {
-            $errores[] = "Ingrese el correo";
-        }
-
-        if (!$direccion) {
-            $errores[] = "Ingrese la dirección";
-        }
-
-        if (!$contraseña) {
-            $errores[] = "Ingrese la contraseña";
-        }
+    return $resultado->fetch_assoc();
+}
 
 
-        // COMPROBAR SI YA EXISTE
+function insertar_usuario($nombre, $documento, $telefono, $email, $direccion, $contraseña)
+{
+    global $conexion;
 
-        $query = "SELECT * FROM usuario WHERE documento = '$documento'";
-        $resultado = mysqli_query($conex, $query);
-
-        if ($resultado && mysqli_num_rows($resultado) > 0) {
-            $errores[] = "El usuario ya existe";
-        }
-
-
-        // INSERTAR USUARIO
-
-        if (empty($errores)) {
-
-            $password_hash = password_hash($contraseña, PASSWORD_DEFAULT);
-
-            $query = "INSERT INTO usuario
+    $sql = "INSERT INTO usuario 
             (nombre, documento, telefono, email, direccion, contraseña)
-            VALUES
-            ('$nombre', '$documento', '$telefono', '$email', '$direccion', '$password_hash')";
+            VALUES (?, ?, ?, ?, ?, ?)";
 
-            $insertar = mysqli_query($conex, $query);
+    $stmt = $conexion->prepare($sql);
 
-            if ($insertar) {
+    $stmt->bind_param(
+        "ssssss",
+        $nombre,
+        $documento,
+        $telefono,
+        $email,
+        $direccion,
+        $contraseña
+    );
 
-                header("Location: index.php");
-                exit;
-
-            } else {
-
-                $errores[] = "Error al insertar: " . mysqli_error($conex);
-            }
-        }
-    }
-
-    return $errores;
+    return $stmt->execute();
 }
 
 
-function iniciar_sesion()
+function eliminar_usuario($id)
 {
-    require "conexion.php";
+    global $conexion;
 
-    $errores_login = [];
+    $sql = "DELETE FROM usuario WHERE id_usuario = ?";
 
-    if (isset($_POST["login"])) {
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("i", $id);
 
-        $email = $_POST["email_login"] ?? "";
-        $contraseña = $_POST["contraseña_login"] ?? "";
-
-        $query = "SELECT * FROM usuario WHERE email = '$email'";
-
-        $resultado = mysqli_query($conex, $query);
-
-        if ($resultado && mysqli_num_rows($resultado) > 0) {
-
-            $usuario = mysqli_fetch_assoc($resultado);
-
-            if (password_verify($contraseña, $usuario["contraseña"])) {
-
-                header("Location: /PAGINA-2/index.html");
-                exit;
-
-            } else {
-
-                $errores_login[] = "Usuario o contraseña incorrectos";
-            }
-
-        } else {
-
-            $errores_login[] = "Usuario o contraseña incorrectos";
-        }
-    }
-
-    return $errores_login;
+    return $stmt->execute();
 }
+
+?>
