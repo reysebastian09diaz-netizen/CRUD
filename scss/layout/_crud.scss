@@ -1,0 +1,26 @@
+@use "../base/variables" as v;
+
+body { background: #f4f7fa; }
+.pagina-usuarios, .pagina-formulario { padding: 4rem 0; }
+.encabezado-pagina { display: flex; justify-content: space-between; align-items: center; gap: 2rem; margin-bottom: 2rem; }
+.encabezado-pagina h2, .tarjeta-formulario h1 { margin: 0; font-size: 3.2rem; }
+.encabezado-pagina p { margin: .5rem 0 0; font-size: 1.6rem; }
+.boton { display: inline-block; padding: 1.2rem 1.8rem; border: 0; border-radius: .6rem; color: v.$blanco; background: v.$azul; font-size: 1.6rem; cursor: pointer; }
+.boton:hover { background: #1d5b80; }
+.tabla-contenedor, .tarjeta-formulario { overflow-x: auto; background: v.$blanco; border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+table { width: 100%; border-collapse: collapse; font-size: 1.5rem; }
+th, td { padding: 1.5rem; text-align: left; border-bottom: 1px solid #e6e9ed; }
+th { background: #edf4f8; }
+.acciones { display: flex; gap: 1.2rem; }
+.acciones a { color: v.$azul; font-weight: bold; }
+.acciones .accion-eliminar { color: v.$rosa; }
+.tarjeta-formulario { max-width: 70rem; margin: 2rem auto; padding: 3rem; }
+.formulario-usuario { display: grid; grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr)); gap: 1.6rem; }
+.formulario-usuario .boton { grid-column: 1 / -1; justify-self: start; }
+.campo label { display: block; font-size: 1.5rem; font-weight: bold; margin-bottom: .6rem; }
+.campo input { width: 100%; padding: 1.1rem; border: 1px solid #cbd5df; border-radius: .5rem; font-size: 1.6rem; }
+.enlace-volver { color: v.$azul; font-size: 1.6rem; }
+.mensaje { padding: 1.2rem; border-radius: .5rem; font-size: 1.5rem; }
+.mensaje-error { color: #9b1c1c; background: #fde8e8; }
+.mensaje-exito { color: #166534; background: #dcfce7; }
+.navegacion-principal span { color: v.$blanco; font-size: 1.5rem; }

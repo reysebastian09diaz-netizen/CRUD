@@ -1,81 +1,51 @@
 <?php
-
 session_start();
+require_once(__DIR__ . '/db/conexion.php');
 
-require_once("db/funciones.php");
-
-$mensaje = "";
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    $email = $_POST["email"];
-    $contraseña = $_POST["contraseña"];
-
-    $sql = "SELECT * FROM usuario WHERE email = ? AND contraseña = ?";
-
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("ss", $email, $contraseña);
-    $stmt->execute();
-
-    $resultado = $stmt->get_result();
-
-    if ($resultado->num_rows > 0) {
-
-        $usuario = $resultado->fetch_assoc();
-
-        $_SESSION["cedula"] = $usuario["documento"];
-        $_SESSION["nombre"] = $usuario["nombre"];
-
-        header("Location: pag/users.php");
-        exit();
-
-    } else {
-
-        $mensaje = "Usuario o contraseña incorrectos.";
-
-    }
+if (isset($_SESSION['cedula'])) {
+    header('Location: pag/users.php');
+    exit();
 }
 
-?>
+$mensaje = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email'] ?? '');
+    $contrasena = $_POST['contrasena'] ?? '';
+    $sql = 'SELECT id_usuario, nombre FROM usuario WHERE email = ? AND contraseña = ?';
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param('ss', $email, $contrasena);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
+    if ($usuario = $resultado->fetch_assoc()) {
+        $_SESSION['cedula'] = $usuario['id_usuario'];
+        $_SESSION['nombre'] = $usuario['nombre'];
+        header('Location: pag/users.php');
+        exit();
+    }
+    $mensaje = 'Correo o contraseña incorrectos.';
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <title>Iniciar Sesión</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="build/css/app.css">
+    <title>Iniciar sesión</title>
 </head>
-
-<body>
-
-    <h1>Login</h1>
-
-    <?php if ($mensaje != "") { ?>
-        <p><?php echo $mensaje; ?></p>
-    <?php } ?>
-
-    <form method="POST">
-
-        <label>Correo:</label>
-        <br>
-        <input type="email" name="email" required>
-
-        <br><br>
-
-        <label>Contraseña:</label>
-        <br>
-        <input type="password" name="contraseña" required>
-
-        <br><br>
-
-        <button type="submit">Ingresar</button>
-
-    </form>
-
-    <br>
-
-    <a href="form/formUsuarios.php">Registrar usuario</a>
-
+<body class="pagina-login">
+<main class="login-container">
+    <section class="login-card">
+        <h1>Biblioteca</h1>
+        <h2>Iniciar sesión</h2>
+        <?php if ($mensaje): ?><p class="mensaje mensaje-error"><?= htmlspecialchars($mensaje, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
+        <form method="POST">
+            <div class="campo"><label for="email">Correo electrónico</label><input id="email" type="email" name="email" required></div>
+            <div class="campo"><label for="contrasena">Contraseña</label><input id="contrasena" type="password" name="contrasena" required></div>
+            <button class="btn-submit" type="submit">Ingresar</button>
+        </form>
+    </section>
+</main>
 </body>
-
 </html>
