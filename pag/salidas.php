@@ -1,3 +1,3 @@
 <?php
 $_GET['tipo'] = 'salidas';
-require __DIR__ . '/modulo.php';
+require __DIR__ . '/../modulos/moduloSalidas.php';

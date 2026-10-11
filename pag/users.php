@@ -26,7 +26,12 @@ $mensajes = ['creado' => 'Usuario registrado correctamente.', 'actualizado' => '
     <header class="header">
         <div class="contenedor contenido-header">
             <h1>Proyecto de barcos</h1>
-            <nav class="navegacion-principal"><a href="clientes.php">Clientes</a><a href="barcos.php">Barcos</a><a href="salidas.php">Salidas</a><span>Hola, <?= e($_SESSION['nombre']) ?></span><a href="cerrarSesion.php">Cerrar sesión</a></nav>
+            <nav class="navegacion-principal"><a href="clientes.php">Clientes</a><a href="socios.php">Socios</a><a href="barcos.php">Barcos</a><a href="salidas.php">Salidas</a><span>Hola, <?= e($_SESSION['nombre']) ?></span><a href="cerrarSesion.php">
+                    <svg class="icono-logout" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 12h-9.5m7.5 3 3-3-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1" />
+                    </svg>
+                </a></nav>
         </div>
     </header>
     <main class="contenedor pagina-usuarios">
